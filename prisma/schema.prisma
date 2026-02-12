@@ -1,0 +1,92 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Lead {
+  id             String                @id @default(cuid())
+  nombre         String
+  email          String                @unique
+  telefono       String?
+  empresa        String?
+  tipoNegocio    String?
+  origen         String?
+  fuente         String                @default("website")
+  estado         String                @default("nuevo")
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  conversaciones ConversacionChatbot[]
+  cotizaciones   Cotizacion[]
+  pagos          Pago[]
+  reuniones      Reunion[]
+}
+
+model Cotizacion {
+  id              String   @id @default(cuid())
+  leadId          String
+  tipoSitio       String
+  caracteristicas Json
+  precioEstimado  Float
+  moneda          String   @default("USD")
+  precioLocal     Float?
+  descripcion     String?
+  estado          String   @default("pendiente")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  lead            Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  pagos           Pago[]
+}
+
+model Reunion {
+  id           String   @id @default(cuid())
+  leadId       String
+  fechaReunion DateTime
+  horaReunion  String
+  estado       String   @default("programada")
+  notas        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  lead         Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
+
+model ConversacionChatbot {
+  id        String   @id @default(cuid())
+  leadId    String?
+  mensajes  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lead      Lead?    @relation(fields: [leadId], references: [id])
+}
+
+model Pago {
+  id                String      @id @default(cuid())
+  leadId            String
+  cotizacionId      String?
+  monto             Float
+  moneda            String
+  metodoPago        String
+  estadoPago        String      @default("pendiente")
+  transaccionId     String?
+  mercadoPagoId     String?
+  mercadoPagoStatus String?
+  metadata          Json?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  cotizacion        Cotizacion? @relation(fields: [cotizacionId], references: [id])
+  lead              Lead        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
