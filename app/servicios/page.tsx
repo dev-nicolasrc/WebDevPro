@@ -32,7 +32,7 @@ export default function ServiciosPage() {
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-gray-900 mb-1">{paquete?.nombre}</h3>
                   <p className="text-sm text-gray-500 mb-4">{paquete?.descripcion}</p>
-                  <div className="mb-6"><span className="text-4xl font-bold gradient-text">${paquete?.precio?.toLocaleString?.()}</span><span className="text-gray-500 ml-1">USD</span></div>
+                  <div className="mb-6"><span className="text-4xl font-bold gradient-text">${paquete?.precioUSD?.toLocaleString?.()}</span><span className="text-gray-500 ml-1">USD</span></div>
                   <ul className="space-y-2 mb-6">
                     {paquete?.caracteristicas?.map?.((c, i) => (<li key={i} className="flex items-start gap-2 text-sm text-gray-600"><Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" /><span>{c}</span></li>))}
                   </ul>
